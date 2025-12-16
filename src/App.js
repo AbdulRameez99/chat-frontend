@@ -5,24 +5,15 @@ import HomePage from './components/HomePage';
 import Login from './components/Login';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { io } from "socket.io-client";
+import io from "socket.io-client"; // ✅ FIXED
 import { setSocket } from './redux/socketSlice';
 import { setOnlineUsers } from './redux/userSlice';
 import { BASE_URL } from '.';
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />
-  },
-  {
-    path: "/signup",
-    element: <Signup />
-  },
-  {
-    path: "/login",
-    element: <Login />
-  },
+  { path: "/", element: <HomePage /> },
+  { path: "/signup", element: <Signup /> },
+  { path: "/login", element: <Login /> },
 ]);
 
 function App() {
@@ -32,9 +23,8 @@ function App() {
 
   useEffect(() => {
     if (authUser) {
-      // ✅ DEPLOYMENT-READY SOCKET CONNECTION
       const socketio = io(BASE_URL, {
-        withCredentials: true,        // ✅ IMPORTANT
+        withCredentials: true,
         query: {
           userId: authUser._id
         }
