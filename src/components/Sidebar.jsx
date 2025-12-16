@@ -19,40 +19,40 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ LOGOUT (DEPLOYMENT SAFE)
+  // ✅ LOGOUT HANDLER (CORRECT)
   const logoutHandler = async () => {
     try {
       const res = await axios.get(
         `${BASE_URL}/api/v1/user/logout`,
-        { withCredentials: true }   // ✅ IMPORTANT
+        { withCredentials: true }
       );
 
       toast.success(res.data.message);
       navigate("/login");
 
+      // ✅ RESET STATE CORRECTLY
       dispatch(setAuthUser(null));
-      dispatch(setMessages(null));
-      dispatch(setOtherUsers(null));
+      dispatch(setMessages([]));
+      dispatch(setOtherUsers([]));
       dispatch(setSelectedUser(null));
+
     } catch (error) {
       toast.error("Logout failed");
       console.error(error);
     }
   };
 
-  // ✅ SAFE SEARCH HANDLER
+  // ✅ SEARCH HANDLER (DOES NOT MUTATE REDUX)
   const searchSubmitHandler = (e) => {
     e.preventDefault();
 
     if (!search.trim()) return;
 
-    const conversationUser = otherUsers?.find((user) =>
+    const foundUser = otherUsers.find(user =>
       user.fullName?.toLowerCase().includes(search.toLowerCase())
     );
 
-    if (conversationUser) {
-      dispatch(setOtherUsers([conversationUser]));
-    } else {
+    if (!foundUser) {
       toast.error("User not found!");
     }
   };
@@ -77,6 +77,7 @@ const Sidebar = () => {
 
       <div className="divider px-3"></div>
 
+      {/* ✅ USERS LIST (ALWAYS INTACT) */}
       <OtherUsers />
 
       <div className='mt-2'>
